@@ -1,32 +1,31 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import ReactDOM from 'react-dom';
 
+function fetchTodosFromLocalStorage() {
+  const storedTodos = localStorage.getItem('todos');
+  return storedTodos ? JSON.parse(storedTodos) : [];
+}
+
+function saveTodosToLocalStorage(todos) {
+  localStorage.setItem('todos', JSON.stringify(todos));
+}
+
 function fetchTodos() {
-  return [
+  return fetchTodosFromLocalStorage().length ? fetchTodosFromLocalStorage() : [
     {
-      id: 1,
-      title: "開發環境",
-      completed: false,
+      id: 1, title: "建立開發環境", completed: false,
     },
     {
-      id: 2,
-      title: "新增按鈕",
-      completed: false,
+      id: 2, title: "新增按鈕", completed: false,
     },
     {
-      id: 3,
-      title: "列表清單",
-      completed: false,
+      id: 3, title: "列表清單", completed: false,
     },
     {
-      id: 4,
-      title: "輸入框",
-      completed: false,
+      id: 4, title: "輸入框", completed: false,
     },
     {
-      id: 5,  
-      title: "睡覺",
-      completed: false,
+      id: 5, title: "睡覺", completed: false,
     },
   ];
 }
@@ -82,8 +81,15 @@ function App() {
   const [todos, setTodos] = useState(fetchTodos());
 
   const handleAddTodo = (newTodo) => {
-    setTodos([...todos, newTodo]);
+    const newTodos = [...todos, newTodo];
+    setTodos(newTodos);
+    saveTodosToLocalStorage(newTodos);
   };
+
+  useEffect(() => {
+    // 在組件初始化時從 localStorage 中讀取 todos
+    setTodos(fetchTodosFromLocalStorage());
+  }, []);
 
   return (
     <>
